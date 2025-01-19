@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require("fs");
 const path = require("path");
 
 async function copyDir(inputDir, outputDir) {
@@ -8,18 +8,18 @@ async function copyDir(inputDir, outputDir) {
        
         const copyItems = await fs.promises.readdir(inputDir, { withFileTypes: true });
         items = [];
-        copyItems.forEach(async file =>  {
-            items.push(file.name);
+        
+        for (const file of copyItems) { 
+             items.push(file.name);
             if (file.isDirectory()) {
                 copyDir(path.join(inputDir, file.name), path.join(outputDir, file.name));
             }
              else if (file.isFile()) {
                 await fs.promises.copyFile(path.join(inputDir, file.name), path.join(outputDir, file.name));
             }
-            
-        });
+        }
         const copyOutputItems = await fs.promises.readdir(outputDir, { withFileTypes: true });
-        copyOutputItems.forEach(async file => {
+        for (const file of copyOutputItems) { 
             if (!items.includes(file.name)) {
                 await fs.promises.rm(path.join(outputDir, file.name), { recursive: true, force: true }, err => {
                     if (err) {
@@ -28,7 +28,7 @@ async function copyDir(inputDir, outputDir) {
                     console.log(`${path.join(outputDir, file.name)} is deleted!`);
                 });
             }
-        });
+        }
     } catch (error) {
         console.log(error);
     }
